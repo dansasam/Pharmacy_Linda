@@ -26,12 +26,6 @@ if (is_logged_in()) {
                 <input type="password" name="password" required minlength="6" />
                 <label>Confirm Password</label>
                 <input type="password" name="confirm_password" required minlength="6" />
-                <label>Role</label>
-                <select name="role" required>
-                    <option value="Intern">Intern</option>
-                    <option value="HR Personnel">HR Personnel</option>
-                    <option value="Pharmacist">Pharmacist</option>
-                </select>
                 <button type="submit" class="btn btn-primary">Register</button>
             </form>
             <p class="small">Already registered? <a href="index.php">Login here</a>.</p>

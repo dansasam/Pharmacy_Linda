@@ -39,12 +39,7 @@ if (registerForm) {
         try {
             await fetchJson('api/auth.php?action=register', { method: 'POST', body: form });
             showMessage('#register-message', 'Registration successful. Redirecting...');
-            const role = form.get('role');
-            setTimeout(() => {
-                if (role === 'HR Personnel') window.location.href = 'dashboard_hr.php';
-                else if (role === 'Pharmacist') window.location.href = 'dashboard_pharmacist.php';
-                else window.location.href = 'dashboard_intern.php';
-            }, 900);
+            setTimeout(() => window.location.href = 'choose_role.php', 900);
         } catch (error) {
             showMessage('#register-message', error.message, true);
         }

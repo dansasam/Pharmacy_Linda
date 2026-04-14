@@ -34,8 +34,12 @@ function require_login() {
 
 function require_role($role) {
     $user = current_user();
-    if (!$user || $user['role'] !== $role) {
+    if (!$user || ($user['role'] !== $role && $user['role'] !== null)) {
         header('Location: index.php');
+        exit;
+    }
+    if ($user['role'] === null) {
+        header('Location: choose_role.php');
         exit;
     }
 }
@@ -44,6 +48,10 @@ function redirect_role_dashboard() {
     $user = current_user();
     if (!$user) {
         header('Location: index.php');
+        exit;
+    }
+    if ($user['role'] === null) {
+        header('Location: choose_role.php');
         exit;
     }
     switch ($user['role']) {

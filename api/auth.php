@@ -22,7 +22,6 @@ switch ($action) {
         $email = filter_var($data['email'] ?? '', FILTER_VALIDATE_EMAIL);
         $password = $data['password'] ?? '';
         $confirm_password = $data['confirm_password'] ?? '';
-        $role = in_array($data['role'] ?? '', ['Intern', 'HR Personnel', 'Pharmacist']) ? $data['role'] : 'Intern';
         if (!$full_name || !$email || !$password || !$confirm_password || $password !== $confirm_password) {
             send_json(['success' => false, 'message' => 'Please complete all fields and make sure passwords match.'], 400);
         }
@@ -32,8 +31,8 @@ switch ($action) {
             send_json(['success' => false, 'message' => 'Email already exists.'], 409);
         }
         $password_hash = password_hash($password, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare('INSERT INTO users (full_name, email, password_hash, role, created_at) VALUES (?, ?, ?, ?, NOW())');
-        $stmt->execute([$full_name, $email, $password_hash, $role]);
+        $stmt = $pdo->prepare('INSERT INTO users (full_name, email, password_hash, role, created_at) VALUES (?, ?, ?, NULL, NOW())');
+        $stmt->execute([$full_name, $email, $password_hash]);
         $_SESSION['user_id'] = $pdo->lastInsertId();
         send_json(['success' => true]);
         break;

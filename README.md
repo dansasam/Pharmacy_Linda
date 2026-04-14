@@ -15,7 +15,8 @@ This system supports:
 
 ## Features
 
-- Register as Intern, HR Personnel, or Pharmacist
+- Register as a new user (email/password)
+- After registration, select your role (Intern, HR Personnel, or Pharmacist)
 - Login with email/password or Google
 - Role-based redirection after login
 - Intern upload checklist with status tracking
@@ -49,22 +50,27 @@ This system supports:
 
 ### Intern
 
-- Login with email/password or Google.
-- Upload required documents for each checklist item.
-- Review status indicators for Uploaded, Pending, Approved, or Rejected.
-- View pharmacy policies and guidelines.
+- Register and choose "Intern" role
+- Login with email/password or Google
+- Upload required documents for each checklist item
+- Review status indicators for Uploaded, Pending, Approved, or Rejected
+- View pharmacy policies and guidelines
 
 ### HR Personnel
 
-- Manage internship requirement templates.
-- Create and edit pharmacy policies by category.
-- Review intern submissions, approve or reject documents, and leave remarks.
-- Monitor total interns, pending submissions, and completed interns.
+- Register and choose "HR Personnel" role
+- Login with email/password or Google
+- Manage internship requirement templates
+- Create and edit pharmacy policies by category
+- Review intern submissions, approve or reject documents, and leave remarks
+- Monitor total interns, pending submissions, and completed interns
 
 ### Pharmacist
 
-- View intern progress and completion status.
-- See reports for interns with approved document counts and completion percentage.
+- Register and choose "Pharmacist" role
+- Login with email/password or Google
+- View intern progress and completion status
+- See reports for interns with approved document counts and completion percentage
 
 ## Notes
 
@@ -77,7 +83,8 @@ This system supports:
 
 - `index.php` — Login page
 - `register.php` — Registration page
-- `google_login.php` / `google_callback.php` — Google sign-in flow
+- `choose_role.php` — Role selection for new users
+- `google_login.php`, `google_callback.php`, `google_role.php` — Google sign-in flow
 - `dashboard_intern.php` — Intern dashboard
 - `dashboard_hr.php` — HR dashboard
 - `dashboard_pharmacist.php` — Pharmacist dashboard

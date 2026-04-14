@@ -1,106 +1,286 @@
-/* Skeleton UI only */
-
+/* Skeletal minimal styling */
 * {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #fff;
-    color: #000;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
 }
 
-a {
-    color: #000;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-button,
-input,
-select,
-textarea {
-    font: inherit;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 0.5rem;
+input, select, textarea, button {
+    font-family: inherit;
+    font-size: inherit;
 }
 
 button {
-    background: #f7f7f7;
     cursor: pointer;
-}
-
-.auth-page,
-.dashboard-layout {
-    min-height: 100vh;
-    padding: 1rem;
-}
-
-.auth-card,
-.section-card,
-.sidebar,
-.main-content {
+    padding: 8px 16px;
     border: 1px solid #ccc;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    background: #fff;
+    background: #f0f0f0;
 }
 
-.auth-form,
-.compact-form {
-    display: block;
+.auth-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
 }
 
-.auth-form label,
-.compact-form label {
+.auth-card {
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid #999;
+    padding: 20px;
+}
+
+.auth-card h1 {
+    margin: 0 0 10px 0;
+}
+
+.auth-card p {
+    margin: 0 0 20px 0;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.auth-form label {
     display: block;
-    margin-bottom: 0.25rem;
+    margin-bottom: 5px;
     font-weight: bold;
 }
 
 .auth-form input,
-.compact-form input,
 .auth-form select,
-.compact-form select,
-.auth-form textarea,
-.compact-form textarea {
+.auth-form textarea {
+    padding: 8px;
+    border: 1px solid #ccc;
     width: 100%;
-    margin-bottom: 0.75rem;
 }
 
-.sidebar nav a,
-button {
-    display: inline-block;
-    margin-bottom: 0.5rem;
+.small {
+    font-size: 12px;
+}
+
+.message {
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid #999;
+}
+
+.message.error {
+    border-color: red;
+    color: red;
+}
+
+.dashboard-layout {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    min-height: 100vh;
+}
+
+.sidebar {
+    border-right: 1px solid #ccc;
+    padding: 20px;
+}
+
+.sidebar-brand {
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.sidebar nav a {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-decoration: none;
+    color: #000;
+    display: block;
+}
+
+.sidebar nav a.active {
+    background: #e0e0e0;
+}
+
+.main-content {
+    padding: 20px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+}
+
+.topbar h1 {
+    margin: 0;
+}
+
+.section-card {
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.section-header {
+    margin-bottom: 15px;
+}
+
+.section-header h2 {
+    margin: 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.stat-card {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.stat-card span {
+    display: block;
+    font-size: 12px;
+}
+
+.stat-card strong {
+    display: block;
+    font-size: 20px;
+    margin-top: 5px;
+}
+
+.progress-card {
+    margin-top: 15px;
+}
+
+.progress-label {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.progress-bar-wrap {
+    width: 100%;
+    height: 20px;
+    border: 1px solid #ccc;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0;
+    background: #999;
+}
+
+.progress-text {
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.table-scroll {
+    overflow-x: auto;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-bottom: 1rem;
+    margin-top: 10px;
+}
+
+thead {
+    background: #f0f0f0;
 }
 
 thead th,
 tbody td {
-    padding: 0.5rem;
     border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
 }
 
-.message {
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    margin-top: 0.75rem;
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border: 1px solid #999;
+    font-size: 11px;
 }
 
-@media (min-width: 768px) {
+.compact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.compact-form label {
+    font-weight: bold;
+}
+
+.compact-form input,
+.compact-form textarea,
+.compact-form select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    width: 100%;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    color: #0066cc;
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: bold;
+}
+
+.small-note {
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+.upload-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.upload-form input {
+    flex: 1;
+}
+
+.review-form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.review-form select,
+.review-form input,
+.review-form button {
+    padding: 6px;
+}
+
+@media (max-width: 768px) {
     .dashboard-layout {
-        display: grid;
-        grid-template-columns: 220px 1fr;
-        gap: 1rem;
+        grid-template-columns: 1fr;
+    }
+    .sidebar {
+        border-right: none;
+        border-bottom: 1px solid #ccc;
     }
 }

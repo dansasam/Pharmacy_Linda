@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
     full_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) DEFAULT NULL,
-    role ENUM('Intern','HR Personnel','Pharmacist') NOT NULL,
+    role ENUM('Intern','HR Personnel','Pharmacist') NULL,
     google_id VARCHAR(255) DEFAULT NULL,
     created_at DATETIME NOT NULL,
     INDEX(role)
