@@ -158,18 +158,16 @@ const loadHRDashboard = async () => {
     const policies = await fetchJson('api/policies.php?action=list');
     const policyRows = policies.policies.map(item => `
         <tr>
-            <td>${item.category}</td>
             <td>${item.title}</td>
             <td>${item.content}</td>
-            <td><button type="button" class="action-btn edit-policy" data-id="${item.id}" data-category="${item.category}" data-title="${item.title}" data-content="${item.content}">Edit</button> | <button type="button" class="action-btn delete-policy" data-id="${item.id}">Delete</button></td>
+            <td><button type="button" class="action-btn edit-policy" data-id="${item.id}" data-title="${item.title}" data-content="${item.content}">Edit</button> | <button type="button" class="action-btn delete-policy" data-id="${item.id}">Delete</button></td>
         </tr>
     `).join('');
-    document.querySelector('#policies-admin-list').innerHTML = `<table><thead><tr><th>Category</th><th>Title</th><th>Content</th><th>Actions</th></tr></thead><tbody>${policyRows}</tbody></table>`;
+    document.querySelector('#policies-admin-list').innerHTML = `<table><thead><tr><th>Title</th><th>Content</th><th>Actions</th></tr></thead><tbody>${policyRows}</tbody></table>`;
     document.querySelectorAll('.edit-policy').forEach(button => {
         button.addEventListener('click', () => {
             const form = document.querySelector('#policy-form');
             form.id.value = button.dataset.id;
-            form.category.value = button.dataset.category;
             form.title.value = button.dataset.title;
             form.content.value = button.dataset.content;
         });

@@ -11,11 +11,11 @@ switch ($action) {
     case 'create':
         require_login();
         require_role('HR Personnel');
-        $category = trim($_POST['category'] ?? '');
+        $category = trim($_POST['category'] ?? 'General');
         $title = trim($_POST['title'] ?? '');
         $content = trim($_POST['content'] ?? '');
-        if (!$category || !$title || !$content) {
-            send_json(['success' => false, 'message' => 'All fields are required.'], 400);
+        if (!$title || !$content) {
+            send_json(['success' => false, 'message' => 'Title and content are required.'], 400);
         }
         $stmt = $pdo->prepare('INSERT INTO policies (category, title, content, created_at) VALUES (?, ?, ?, NOW())');
         $stmt->execute([$category, $title, $content]);
@@ -26,10 +26,10 @@ switch ($action) {
         require_login();
         require_role('HR Personnel');
         $id = intval($_POST['id'] ?? 0);
-        $category = trim($_POST['category'] ?? '');
+        $category = trim($_POST['category'] ?? 'General');
         $title = trim($_POST['title'] ?? '');
         $content = trim($_POST['content'] ?? '');
-        if (!$id || !$category || !$title || !$content) {
+        if (!$id || !$title || !$content) {
             send_json(['success' => false, 'message' => 'Invalid policy data.'], 400);
         }
         $stmt = $pdo->prepare('UPDATE policies SET category = ?, title = ?, content = ? WHERE id = ?');
