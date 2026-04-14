@@ -1,0 +1,106 @@
+/* Skeleton UI only */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #fff;
+    color: #000;
+}
+
+a {
+    color: #000;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0.5rem;
+}
+
+button {
+    background: #f7f7f7;
+    cursor: pointer;
+}
+
+.auth-page,
+.dashboard-layout {
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+.auth-card,
+.section-card,
+.sidebar,
+.main-content {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: #fff;
+}
+
+.auth-form,
+.compact-form {
+    display: block;
+}
+
+.auth-form label,
+.compact-form label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+}
+
+.auth-form input,
+.compact-form input,
+.auth-form select,
+.compact-form select,
+.auth-form textarea,
+.compact-form textarea {
+    width: 100%;
+    margin-bottom: 0.75rem;
+}
+
+.sidebar nav a,
+button {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+thead th,
+tbody td {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+}
+
+.message {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    margin-top: 0.75rem;
+}
+
+@media (min-width: 768px) {
+    .dashboard-layout {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        gap: 1rem;
+    }
+}
