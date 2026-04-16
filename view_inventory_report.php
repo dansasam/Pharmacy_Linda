@@ -26,23 +26,39 @@ if (isset($_GET['approved'])) {
     $success = "Report #$approved_id has been approved! You can now create a requisition request below.";
 }
 
+// Check if just denied
+if (isset($_GET['denied'])) {
+    $denied_id = (int)$_GET['denied'];
+    $success = "Report #$denied_id has been denied. The intern has been notified and can resubmit after corrections.";
+}
+
 // Handle approve/deny actions
 if (isset($_GET['action']) && isset($_GET['report_id'])) {
     $report_id = (int)$_GET['report_id'];
     $action = $_GET['action'];
+    $current_user = current_user();
     
     if ($action === 'approve') {
-        // First verify the report exists
-        $checkReport = $conn->query("SELECT report_id, status FROM p1014_inventory_reports WHERE report_id=$report_id");
+        // First verify the report exists and get intern_id
+        $checkReport = $conn->query("SELECT report_id, status, intern_id, created_by FROM p1014_inventory_reports WHERE report_id=$report_id");
         
         if ($checkReport && $checkReport->num_rows > 0) {
             $currentReport = $checkReport->fetch_assoc();
             
             // Update the status
-            $updateResult = $conn->query("UPDATE p1014_inventory_reports SET status='approved' WHERE report_id=$report_id");
+            $reviewer_name = esc($conn, $current_user['full_name']);
+            $updateResult = $conn->query("UPDATE p1014_inventory_reports SET status='approved', reviewed_by='$reviewer_name', reviewed_at=NOW() WHERE report_id=$report_id");
             
             // Check if update was successful
             if ($updateResult) {
+                // Send notification to intern
+                if ($currentReport['intern_id']) {
+                    $notifStmt = $pdo->prepare('INSERT INTO notifications (user_id, title, message) VALUES (?, ?, ?)');
+                    $title = 'Inventory Report Approved';
+                    $message = "Your inventory report #$report_id has been approved by {$current_user['full_name']}. You can now proceed with requisition.";
+                    $notifStmt->execute([$currentReport['intern_id'], $title, $message]);
+                }
+                
                 // Add timestamp to prevent caching
                 $timestamp = time();
                 header("Location: view_inventory_report.php?approved=$report_id&t=$timestamp");
@@ -60,14 +76,33 @@ if (isset($_GET['action']) && isset($_GET['report_id'])) {
 if ($_SERVER['REQUEST_METHOD']==='POST' && isset($_POST['deny_report'])) {
     $report_id = (int)$_POST['report_id'];
     $deny_remarks = esc($conn, $_POST['deny_remarks']);
+    $current_user = current_user();
     
     if (!$deny_remarks) {
         $error = "Please provide remarks explaining why the report is being denied.";
     } else {
-        $conn->query("UPDATE p1014_inventory_reports SET status='denied', denial_remarks='$deny_remarks' WHERE report_id=$report_id");
-        $success = "Report #$report_id has been denied. The intern will be notified.";
-        header("Location: view_inventory_report.php");
-        exit;
+        // Get intern_id before updating
+        $reportInfo = $conn->query("SELECT intern_id, created_by FROM p1014_inventory_reports WHERE report_id=$report_id")->fetch_assoc();
+        
+        // Update status to denied
+        $reviewer_name = esc($conn, $current_user['full_name']);
+        $updateResult = $conn->query("UPDATE p1014_inventory_reports SET status='denied', denial_remarks='$deny_remarks', reviewed_by='$reviewer_name', reviewed_at=NOW() WHERE report_id=$report_id");
+        
+        if ($updateResult) {
+            // Send notification to intern
+            if ($reportInfo && $reportInfo['intern_id']) {
+                $notifStmt = $pdo->prepare('INSERT INTO notifications (user_id, title, message) VALUES (?, ?, ?)');
+                $title = 'Inventory Report Denied';
+                $message = "Your inventory report #$report_id has been denied by {$current_user['full_name']}. Reason: $deny_remarks. Please review and resubmit.";
+                $notifStmt->execute([$reportInfo['intern_id'], $title, $message]);
+            }
+            
+            $success = "Report #$report_id has been denied. The intern has been notified.";
+            header("Location: view_inventory_report.php?denied=$report_id");
+            exit;
+        } else {
+            $error = "Failed to deny report. Database error: " . $conn->error;
+        }
     }
 }
 

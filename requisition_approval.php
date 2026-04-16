@@ -24,15 +24,72 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
             $total=(float)$conn->query("SELECT total_amount FROM p1014_requisition_requests WHERE requisition_id=$req_id")->fetch_assoc()['total_amount'];
             $del_val=$del_date?"'$del_date'":"NULL";
             $conn->query("INSERT INTO p1014_purchase_orders (requisition_id,po_number,po_date,approved_by,supplier_name,delivery_date,status,total_amount) VALUES ($req_id,'$po_number','$po_date','$by','$vendor',$del_val,'approved',$total)");
+            
+            // Get RIS number and requested_by for notification
+            $reqInfo = $conn->query("SELECT ris_number, requested_by FROM p1014_requisition_requests WHERE requisition_id=$req_id")->fetch_assoc();
+            $ris_number = $reqInfo['ris_number'] ?: "Requisition #$req_id";
+            
+            // Notify all technicians about approval
+            $techStmt = $pdo->prepare('SELECT id FROM users WHERE role = "Pharmacy Technician"');
+            $techStmt->execute();
+            $technicians = $techStmt->fetchAll();
+            
+            if ($technicians) {
+                $notifStmt = $pdo->prepare('INSERT INTO notifications (user_id, title, message) VALUES (?, ?, ?)');
+                $title = 'Requisition Approved';
+                $message = "$ris_number has been approved by $by. Purchase Order $po_number has been generated.";
+                
+                foreach ($technicians as $tech) {
+                    $notifStmt->execute([$tech['id'], $title, $message]);
+                }
+            }
+            
             $success="Requisition #$req_id approved. PO <strong>$po_number</strong> generated. <a href='purchase_order.php?req_id=$req_id' style='color:inherit;font-weight:700'>View PO →</a>";
         } elseif ($action==='denied') {
             $conn->query("UPDATE p1014_requisition_requests SET status='rejected' WHERE requisition_id=$req_id");
             $conn->query("INSERT INTO p1014_purchase_orders (requisition_id,po_number,po_date,approved_by,status,denial_reason) VALUES ($req_id,'$po_number','$po_date','$by','denied','$reason')");
+            
+            // Get RIS number for notification
+            $reqInfo = $conn->query("SELECT ris_number FROM p1014_requisition_requests WHERE requisition_id=$req_id")->fetch_assoc();
+            $ris_number = $reqInfo['ris_number'] ?: "Requisition #$req_id";
+            
+            // Notify all technicians about denial
+            $techStmt = $pdo->prepare('SELECT id FROM users WHERE role = "Pharmacy Technician"');
+            $techStmt->execute();
+            $technicians = $techStmt->fetchAll();
+            
+            if ($technicians) {
+                $notifStmt = $pdo->prepare('INSERT INTO notifications (user_id, title, message) VALUES (?, ?, ?)');
+                $title = 'Requisition Denied';
+                $message = "$ris_number has been denied by $by. Reason: $reason";
+                
+                foreach ($technicians as $tech) {
+                    $notifStmt->execute([$tech['id'], $title, $message]);
+                }
+            }
+            
             $success="Requisition #$req_id denied.";
         } elseif ($action==='received') {
             // Mark as received and update inventory
             $conn->begin_transaction();
             try {
+                // Generate receipt number
+                $receipt_number = 'RCPT-' . date('Ymd') . '-' . str_pad($req_id, 4, '0', STR_PAD_LEFT);
+                $receipt_date = date('Y-m-d');
+                
+                // Get PO ID
+                $po_result = $conn->query("SELECT po_id FROM p1014_purchase_orders WHERE requisition_id=$req_id AND status='approved'");
+                if (!$po_result || $po_result->num_rows === 0) {
+                    throw new Exception("Purchase Order not found for this requisition");
+                }
+                $po_id = $po_result->fetch_assoc()['po_id'];
+                
+                // Create receipt record
+                $receipt_notes = "Items received in good condition";
+                $conn->query("INSERT INTO p1014_purchase_receipts (po_id, receipt_number, receipt_date, received_by, receipt_notes) 
+                    VALUES ($po_id, '$receipt_number', '$receipt_date', '$by', '$receipt_notes')");
+                
+                // Update statuses
                 $conn->query("UPDATE p1014_requisition_requests SET status='ordered' WHERE requisition_id=$req_id");
                 $conn->query("UPDATE p1014_purchase_orders SET status='ordered' WHERE requisition_id=$req_id");
                 
@@ -49,7 +106,27 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
                 }
                 
                 $conn->commit();
-                $success="Requisition #$req_id marked as received. Inventory updated for $updated_count items.";
+                
+                // Get RIS number for notification
+                $reqInfo = $conn->query("SELECT ris_number FROM p1014_requisition_requests WHERE requisition_id=$req_id")->fetch_assoc();
+                $ris_number = $reqInfo['ris_number'] ?: "Requisition #$req_id";
+                
+                // Notify all technicians about receipt
+                $techStmt = $pdo->prepare('SELECT id FROM users WHERE role = "Pharmacy Technician"');
+                $techStmt->execute();
+                $technicians = $techStmt->fetchAll();
+                
+                if ($technicians) {
+                    $notifStmt = $pdo->prepare('INSERT INTO notifications (user_id, title, message) VALUES (?, ?, ?)');
+                    $title = 'Order Received - Inventory Updated';
+                    $message = "$ris_number has been received by $by. Receipt $receipt_number generated. Inventory updated for $updated_count items.";
+                    
+                    foreach ($technicians as $tech) {
+                        $notifStmt->execute([$tech['id'], $title, $message]);
+                    }
+                }
+                
+                $success="Requisition #$req_id marked as received. Receipt <strong>$receipt_number</strong> generated. Inventory updated for $updated_count items.";
             } catch (Exception $e) {
                 $conn->rollback();
                 $error="Error updating inventory: ".$e->getMessage();
@@ -65,6 +142,33 @@ $cnt_a=$conn->query("SELECT COUNT(*) AS c FROM p1014_requisition_requests WHERE 
 $cnt_r=$conn->query("SELECT COUNT(*) AS c FROM p1014_requisition_requests WHERE status='rejected'")->fetch_assoc()['c'];
 ?>
 <?php navBar('Requisition Approval Dashboard'); ?>
+<link rel="stylesheet" href="/Pharmacy_Linda/assets/css/clean-theme.css">
+<style>
+/* Fix table overflow and button alignment */
+.ls-card-body-flush {
+    overflow-x: auto;
+}
+
+.ls-table {
+    min-width: 1200px;
+    width: 100%;
+}
+
+/* Ensure action buttons stay in one line */
+.ls-table td:last-child {
+    white-space: nowrap;
+}
+
+/* Make buttons smaller in table */
+.ls-table .ls-btn-sm {
+    padding: 6px 10px !important;
+    font-size: 0.75rem !important;
+}
+
+.ls-table .ls-btn-sm i {
+    font-size: 0.75rem;
+}
+</style>
 <div class="ls-page">
     <div class="ls-page-header">
         <div class="ls-page-title"><i class="bi bi-check2-square" style="color:#f1c40f"></i> Requisition Approval Dashboard</div>
@@ -96,36 +200,45 @@ $cnt_r=$conn->query("SELECT COUNT(*) AS c FROM p1014_requisition_requests WHERE 
 
     <div class="ls-card">
         <div class="ls-card-body-flush">
-            <table class="ls-table">
+            <table class="ls-table" style="table-layout: auto;">
                 <thead><tr>
-                    <th>#</th><th>Date</th><th>Requested By</th><th>Department</th>
-                    <th style="text-align:center">Items</th><th style="text-align:center">OOS</th>
-                    <th style="text-align:right">Total (₱)</th><th>Status</th><th>Action</th>
+                    <th style="width: 120px;">RIS #</th>
+                    <th style="width: 100px;">Date</th>
+                    <th style="width: 140px;">Requested By</th>
+                    <th style="width: 100px;">Department</th>
+                    <th style="text-align:center; width: 60px;">Items</th>
+                    <th style="text-align:center; width: 80px;">OOS</th>
+                    <th style="text-align:right; width: 100px;">Total (₱)</th>
+                    <th style="width: 100px;">Status</th>
+                    <th style="width: 280px; min-width: 280px;">Action</th>
                 </tr></thead>
                 <tbody>
                 <?php if ($reqs&&$reqs->num_rows>0): while ($r=$reqs->fetch_assoc()):
                     $bc=match($r['status']){'approved'=>'ls-badge-success','rejected'=>'ls-badge-danger','ordered'=>'ls-badge-info',default=>'ls-badge-warning'};
+                    $ris_display = $r['ris_number'] ?: '#' . $r['requisition_id'];
                 ?>
                     <tr>
-                        <td style="color:rgba(255,255,255,0.4)">#<?= $r['requisition_id'] ?></td>
+                        <td style="font-weight:700;color:#3498db"><?= htmlspecialchars($ris_display) ?></td>
                         <td><?= $r['requisition_date'] ?></td>
                         <td><?= htmlspecialchars($r['requested_by']) ?></td>
                         <td style="color:rgba(255,255,255,0.4)"><?= htmlspecialchars($r['department']?:'—') ?></td>
                         <td style="text-align:center"><?= $r['total_items'] ?></td>
                         <td style="text-align:center"><?= $r['oos_count']>0?'<span class="ls-badge ls-badge-danger">'.$r['oos_count'].' OOS</span>':'—' ?></td>
-                        <td style="text-align:right;font-weight:700">₱<?= number_format($r['total_amount'],2) ?></td>
+                        <td style="text-align:right;font-weight:700;white-space:nowrap;">₱<?= number_format($r['total_amount'],2) ?></td>
                         <td><span class="ls-badge <?= $bc ?>"><?= strtoupper($r['status']) ?></span></td>
-                        <td>
-                            <a href="view_requisition.php?req_id=<?= $r['requisition_id'] ?>" class="ls-btn ls-btn-primary ls-btn-sm"><i class="bi bi-eye"></i> View</a>
-                            <?php if ($r['status']==='pending'): ?>
-                                <button class="ls-btn ls-btn-success ls-btn-sm" onclick="openApprove(<?= $r['requisition_id'] ?>)" style="margin-left:4px"><i class="bi bi-check-lg"></i> Approve</button>
-                                <button class="ls-btn ls-btn-danger ls-btn-sm" onclick="openDeny(<?= $r['requisition_id'] ?>)" style="margin-left:4px"><i class="bi bi-x-lg"></i> Deny</button>
-                            <?php elseif ($r['status']==='approved'): ?>
-                                <a href="purchase_order.php?req_id=<?= $r['requisition_id'] ?>" class="ls-btn ls-btn-primary ls-btn-sm" style="margin-left:4px"><i class="bi bi-file-earmark-text"></i> View PO</a>
-                                <button class="ls-btn ls-btn-success ls-btn-sm" onclick="openReceived(<?= $r['requisition_id'] ?>)" style="margin-left:4px"><i class="bi bi-box-seam"></i> Mark Received</button>
-                            <?php elseif ($r['status']==='ordered'): ?>
-                                <span class="ls-badge ls-badge-success">Received & Inventory Updated</span>
-                            <?php endif; ?>
+                        <td style="white-space: nowrap;">
+                            <div style="display: flex; gap: 4px; flex-wrap: nowrap; align-items: center;">
+                                <a href="view_requisition.php?req_id=<?= $r['requisition_id'] ?>" class="ls-btn ls-btn-primary ls-btn-sm" style="flex-shrink: 0;"><i class="bi bi-eye"></i> View</a>
+                                <?php if ($r['status']==='pending'): ?>
+                                    <button class="ls-btn ls-btn-success ls-btn-sm" onclick="openApprove(<?= $r['requisition_id'] ?>)" style="flex-shrink: 0;"><i class="bi bi-check-lg"></i> Approve</button>
+                                    <button class="ls-btn ls-btn-danger ls-btn-sm" onclick="openDeny(<?= $r['requisition_id'] ?>)" style="flex-shrink: 0;"><i class="bi bi-x-lg"></i> Deny</button>
+                                <?php elseif ($r['status']==='approved'): ?>
+                                    <a href="purchase_order.php?req_id=<?= $r['requisition_id'] ?>" class="ls-btn ls-btn-primary ls-btn-sm" style="flex-shrink: 0;"><i class="bi bi-file-earmark-text"></i> View PO</a>
+                                    <button class="ls-btn ls-btn-success ls-btn-sm" onclick="openReceived(<?= $r['requisition_id'] ?>)" style="flex-shrink: 0;"><i class="bi bi-box-seam"></i> Mark Received</button>
+                                <?php elseif ($r['status']==='ordered'): ?>
+                                    <span class="ls-badge ls-badge-success" style="white-space: nowrap;">Received & Inventory Updated</span>
+                                <?php endif; ?>
+                            </div>
                         </td>
                     </tr>
                 <?php endwhile; else: ?>

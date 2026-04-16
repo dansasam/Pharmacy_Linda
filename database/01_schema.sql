@@ -50,6 +50,8 @@ CREATE TABLE IF NOT EXISTS intern_submissions (
     UNIQUE KEY user_requirement_unique (user_id, requirement_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Note: If using complete_database.sql, skip this INSERT section
+-- This is only for individual file setup
 INSERT IGNORE INTO internship_requirements (title, description, created_at) VALUES
 ('Proof of Enrollment', 'Upload a valid school enrollment letter or student ID.', NOW()),
 ('Birth Certificate', 'Upload a copy of your birth certificate.', NOW()),

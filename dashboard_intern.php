@@ -1,8 +1,15 @@
 <?php
 require_once __DIR__ . '/common.php';
+require_once __DIR__ . '/intern_access_control.php';
 require_login();
 require_role('Intern');
 $user = current_user();
+
+// Update intern status and get current status
+$current_status = update_intern_status($user['id']);
+$status_message = get_status_message($user);
+$can_access_features = can_access_inventory($user);
+
 $requirements = get_requirements();
 $policies = get_policies();
 
@@ -39,10 +46,19 @@ try {
                 <a href="checklist.php">Checklist</a>
                 <a href="policies.php">Policies</a>
                 <a href="intern_moa_management.php">MOA Management</a>
+                <?php if ($can_access_features): ?>
                 <a href="manage_product_inventory.php">Manage Products</a>
                 <a href="create_inventory_report.php">Create Inventory Report</a>
+                <a href="manage_reports.php">Manage Reports</a>
                 <a href="process7_9_tasks.php">My Tasks</a>
                 <a href="process7_9_orientation.php">Orientation Tracker</a>
+                <?php else: ?>
+                <a href="#" class="disabled" title="Complete requirements and get schedule first">Manage Products</a>
+                <a href="#" class="disabled" title="Complete requirements and get schedule first">Create Inventory Report</a>
+                <a href="#" class="disabled" title="Complete requirements and get schedule first">Manage Reports</a>
+                <a href="#" class="disabled" title="Complete requirements and get schedule first">My Tasks</a>
+                <a href="#" class="disabled" title="Complete requirements and get schedule first">Orientation Tracker</a>
+                <?php endif; ?>
                 <a href="logout.php">Logout</a>
             </nav>
         </aside>
@@ -52,6 +68,22 @@ try {
                 <div>Welcome, <?php echo sanitize_text($user['full_name']); ?></div>
             </header>
             <section id="home" class="section-card">
+                <div class="section-header">
+                    <h2>Application Status</h2>
+                </div>
+                
+                <?php if ($current_status !== 'active'): ?>
+                <div class="ls-alert ls-alert-info" style="margin-bottom:20px">
+                    <i class="bi bi-info-circle"></i> <strong>Status: <?php echo ucwords(str_replace('_', ' ', $current_status)); ?></strong>
+                    <div style="margin-top:8px"><?php echo $status_message; ?></div>
+                </div>
+                <?php else: ?>
+                <div class="ls-alert ls-alert-success" style="margin-bottom:20px">
+                    <i class="bi bi-check-circle"></i> <strong>Status: Active Intern</strong>
+                    <div style="margin-top:8px"><?php echo $status_message; ?></div>
+                </div>
+                <?php endif; ?>
+
                 <div class="section-header">
                     <h2>Progress Overview</h2>
                 </div>

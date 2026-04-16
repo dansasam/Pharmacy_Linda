@@ -2,8 +2,10 @@
 require_once __DIR__ . '/common.php';
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/process10_14_helpers.php';
+require_once __DIR__ . '/intern_access_control.php';
 require_login();
 require_role('Intern');
+require_active_intern(); // This will redirect if not active
 
 // Prevent caching
 header("Cache-Control: no-cache, no-store, must-revalidate");
@@ -17,6 +19,10 @@ if ($conn->connect_error) {
 $conn->set_charset('utf8mb4');
 $success = $error = '';
 
+// Get current user info
+$user = current_user();
+$intern_id = $user['id'];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $report_date = esc($conn,$_POST['report_date']);
     $ward        = esc($conn,$_POST['ward']);
@@ -26,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     else {
         $conn->begin_transaction();
         try {
-            $conn->query("INSERT INTO p1014_inventory_reports (report_date,ward,created_by,remarks,status) VALUES ('$report_date','$ward','$created_by','$remarks','submitted')");
+            $conn->query("INSERT INTO p1014_inventory_reports (report_date,ward,created_by,intern_id,remarks,status) VALUES ('$report_date','$ward','$created_by',$intern_id,'$remarks','submitted')");
             $report_id = $conn->insert_id;
             $pids = $_POST['product_id'] ?? [];
             $sold = $_POST['sold'] ?? [];
@@ -51,6 +57,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $stmt->close();
             $conn->commit();
+            
+            // Notify all technicians about new report
+            $techStmt = $pdo->prepare('SELECT id FROM users WHERE role = "Pharmacy Technician"');
+            $techStmt->execute();
+            $technicians = $techStmt->fetchAll();
+            
+            if ($technicians) {
+                $notifStmt = $pdo->prepare('INSERT INTO notifications (user_id, title, message) VALUES (?, ?, ?)');
+                $title = 'New Inventory Report Submitted';
+                $message = "Report #$report_id has been submitted by {$user['full_name']} for review. Please check and approve/deny.";
+                
+                foreach ($technicians as $tech) {
+                    $notifStmt->execute([$tech['id'], $title, $message]);
+                }
+            }
+            
             $user = current_user();
             $dashboardLink = ($user['role'] ?? '') === 'Intern' ? 'dashboard_intern.php' : 'stock_report_dashboard.php';
             $success="Report #$report_id created and sent to the technician for review. <a href='" . $dashboardLink . "' style='color:inherit;font-weight:700'>View Dashboard</a>";

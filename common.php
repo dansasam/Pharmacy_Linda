@@ -72,6 +72,12 @@ function redirect_role_dashboard() {
         case 'Pharmacy Technician':
             header('Location: dashboard_technician.php');
             break;
+        case 'Pharmacist Assistant':
+            header('Location: dashboard_assistant.php');
+            break;
+        case 'Customer':
+            header('Location: dashboard_customer.php');
+            break;
         default:
             header('Location: index.php');
     }

@@ -35,8 +35,29 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
             }
             $stmt->close();
             $conn->query("UPDATE p1014_requisition_requests SET total_amount=$grand WHERE requisition_id=$req_id");
+            
+            // Generate RIS number
+            $ris_number = 'RIS-' . date('Ymd') . '-' . str_pad($req_id, 4, '0', STR_PAD_LEFT);
+            $conn->query("UPDATE p1014_requisition_requests SET ris_number='$ris_number' WHERE requisition_id=$req_id");
+            
             $conn->commit();
-            $success="Requisition #$req_id submitted. Total: ₱".number_format($grand,2).". <a href='requisition_approval.php' style='color:inherit;font-weight:700'>Go to Approval →</a>";
+            
+            // Notify all pharmacists about new requisition
+            $pharmStmt = $pdo->prepare('SELECT id FROM users WHERE role = "Pharmacist"');
+            $pharmStmt->execute();
+            $pharmacists = $pharmStmt->fetchAll();
+            
+            if ($pharmacists) {
+                $notifStmt = $pdo->prepare('INSERT INTO notifications (user_id, title, message) VALUES (?, ?, ?)');
+                $title = 'New Requisition Request';
+                $message = "Requisition $ris_number has been submitted by {$requested_by}. Total: ₱" . number_format($grand, 2) . ". Please review and approve/deny.";
+                
+                foreach ($pharmacists as $pharm) {
+                    $notifStmt->execute([$pharm['id'], $title, $message]);
+                }
+            }
+            
+            $success="Requisition #$req_id ($ris_number) submitted. Total: ₱".number_format($grand,2).". <a href='requisition_approval.php' style='color:inherit;font-weight:700'>Go to Approval →</a>";
         } catch(Exception $e) { $conn->rollback(); $error="Error: ".$e->getMessage(); }
     }
 }
@@ -60,6 +81,7 @@ $allReports = $conn->query("SELECT r.*,
     ORDER BY r.report_date DESC, r.report_id DESC");
 ?>
 <?php navBar('Requisition Request Form'); ?>
+<link rel="stylesheet" href="/Pharmacy_Linda/assets/css/clean-theme.css">
 <div class="ls-page">
     <div class="ls-page-header">
         <div class="ls-page-title"><i class="bi bi-cart-plus" style="color:#e74c3c"></i> Requisition Request Form</div>

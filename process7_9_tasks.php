@@ -29,8 +29,15 @@ $tasks = $pdo->query('SELECT task_id, employee_name, task_name, description, sta
         <aside class="sidebar">
             <div class="sidebar-brand">Pharmacy Internship</div>
             <nav>
-                <a href="dashboard_hr.php">HR Dashboard</a>
-                <a href="process7_9_task_add.php">Add Task</a>
+                <a href="dashboard_hr.php">Home</a>
+                <a href="dashboard_hr.php#requirements">Manage Requirements</a>
+                <a href="dashboard_hr.php#policies">Manage Policies</a>
+                <a href="dashboard_hr.php#reviews">Review Submissions</a>
+                <a href="dashboard_hr.php#approve">Approve Applicants</a>
+                <a href="interview_management.php">Interview Management</a>
+                <a href="schedule_management.php">Schedule Management</a>
+                <a href="process7_9_tasks.php" class="active">Task Management</a>
+                <a href="moa_management.php">MOA Management</a>
                 <a href="logout.php">Logout</a>
             </nav>
         </aside>
@@ -45,6 +52,7 @@ $tasks = $pdo->query('SELECT task_id, employee_name, task_name, description, sta
             <section class="section-card">
                 <div class="section-header">
                     <h2>Active Tasks</h2>
+                    <a href="process7_9_task_add.php" class="btn btn-primary">+ Add New Task</a>
                 </div>
                 <div class="table-scroll">
                     <table>

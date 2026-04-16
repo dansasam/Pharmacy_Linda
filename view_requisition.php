@@ -44,11 +44,12 @@ $bc = match($req['status']) {
 };
 ?>
 <?php navBar('View Requisition Request'); ?>
+<link rel="stylesheet" href="/Pharmacy_Linda/assets/css/clean-theme.css">
 <div class="ls-page">
     <div class="ls-page-header">
         <div class="ls-page-title">
             <i class="bi bi-file-text" style="color:#3498db"></i> 
-            View Requisition Request #<?= $req['requisition_id'] ?>
+            <?= $req['ris_number'] ? htmlspecialchars($req['ris_number']) : 'Requisition #' . $req['requisition_id'] ?>
         </div>
         <a href="requisition_approval.php" class="ls-btn ls-btn-ghost ls-btn-sm">
             <i class="bi bi-arrow-left"></i> Back to List
@@ -61,8 +62,8 @@ $bc = match($req['status']) {
         <div class="ls-card-body">
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px">
                 <div>
-                    <label style="font-size:0.85rem;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px">Requisition ID</label>
-                    <div style="font-weight:700;font-size:1.1rem">#<?= $req['requisition_id'] ?></div>
+                    <label style="font-size:0.85rem;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px">RIS Number</label>
+                    <div style="font-weight:700;font-size:1.1rem"><?= $req['ris_number'] ? htmlspecialchars($req['ris_number']) : '#' . $req['requisition_id'] ?></div>
                 </div>
                 <div>
                     <label style="font-size:0.85rem;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px">Status</label>

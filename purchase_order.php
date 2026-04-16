@@ -12,6 +12,9 @@ $conn->set_charset('utf8mb4');
 
 $req_id=isset($_GET['req_id'])?(int)$_GET['req_id']:0;
 if (!$req_id) { header('Location: requisition_approval.php'); exit; }
+
+$success_msg = isset($_GET['success']) ? htmlspecialchars($_GET['success']) : '';
+
 $po=$conn->query("SELECT * FROM p1014_purchase_orders WHERE requisition_id=$req_id AND status='approved'")->fetch_assoc();
 if (!$po) { echo '<body style="background:#0f1923;color:#fff;font-family:Segoe UI;display:flex;align-items:center;justify-content:center;min-height:100vh"><div style="text-align:center"><div style="color:#e74c3c;font-size:2rem">⚠</div><p>No approved PO found.</p><a href="requisition_approval.php" style="color:#3498db">Go back</a></div></body>'; exit; }
 $rq=$conn->query("SELECT * FROM p1014_requisition_requests WHERE requisition_id=$req_id")->fetch_assoc();
@@ -31,10 +34,10 @@ $items_arr=[]; while ($row=$items->fetch_assoc()) $items_arr[]=$row;
         /* No-print toolbar */
         .toolbar { background:rgba(255,255,255,0.03); border-bottom:1px solid rgba(255,255,255,0.06); padding:12px 32px; display:flex; gap:10px; align-items:center; }
         .tb-brand { display:flex; align-items:center; gap:8px; margin-right:auto; }
-        .tb-logo { width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,#1a6b3c,#2ecc71);display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.9rem; }
+        .tb-logo { width:32px;height:32px;border-radius:8px;background:#2ecc71;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.9rem; }
         .tb-title { font-weight:700; font-size:0.9rem; color:#fff; }
         .tb-btn { display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:8px;font-size:0.8rem;font-weight:600;border:none;cursor:pointer;text-decoration:none;transition:all 0.2s; }
-        .tb-btn-print { background:linear-gradient(135deg,#1a6b3c,#2ecc71);color:#fff; }
+        .tb-btn-print { background:#2ecc71;color:#fff; }
         .tb-btn-back  { background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6); }
         .tb-btn-back:hover { background:rgba(255,255,255,0.1);color:#fff; }
 
@@ -86,10 +89,19 @@ $items_arr=[]; while ($row=$items->fetch_assoc()) $items_arr[]=$row;
         <div class="tb-logo"><i class="bi bi-box-seam"></i></div>
         <div class="tb-title">Linda System — Purchase Order</div>
     </div>
+    <a href="edit_purchase_order.php?req_id=<?= $req_id ?>" class="tb-btn" style="background:#f39c12;color:#fff"><i class="bi bi-pencil-square"></i> Edit PO</a>
     <button onclick="window.print()" class="tb-btn tb-btn-print"><i class="bi bi-printer"></i> Print / Save PDF</button>
     <a href="requisition_approval.php" class="tb-btn tb-btn-back"><i class="bi bi-arrow-left"></i> Back</a>
     <a href="dashboard.php" class="tb-btn tb-btn-back"><i class="bi bi-speedometer2"></i> Dashboard</a>
 </div>
+
+<?php if ($success_msg): ?>
+<div style="max-width:860px;margin:16px auto;padding:0 24px;">
+    <div style="background:#d5f5e3;border-left:4px solid #1a6b3c;padding:12px 16px;border-radius:8px;color:#1a6b3c;font-size:0.9rem;">
+        <i class="bi bi-check-circle-fill"></i> <?= $success_msg ?>
+    </div>
+</div>
+<?php endif; ?>
 
 <div class="po-wrap">
     <div class="po-doc">

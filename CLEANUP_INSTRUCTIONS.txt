@@ -1,0 +1,78 @@
+===============================================
+CLEANUP INSTRUCTIONS - Safe Files to Delete
+===============================================
+
+You can safely delete these files without affecting the system:
+
+=== DOCUMENTATION FILES (All .md files) ===
+These are just documentation and can be deleted:
+- All files ending with .md (markdown documentation)
+
+=== TEST/DEBUG FILES ===
+These are test files and can be deleted:
+- approve_reports_now.php
+- check_and_fix_report8.php
+- check_columns.php
+- check_products.php
+- check_report_status_debug.php
+- check_report_status.php
+- check_reports.php
+- check_requirements_duplicate.php
+- complete_assessment_fix.php
+- debug_interview_status.php
+- debug_requisition.php
+- diagnostic_full.php
+- diagnostic_index.php
+- fix_all_reports.php
+- fix_assessment_workflow.php
+- fix_missing_columns.php
+- fix_report_status.php
+- force_approve_report8.php
+- force_resubmit_test.php
+- quick_check.php
+- quick_column_fix.php
+- test_approve.php
+- test_assessment.php
+- test_form_submission.php
+- test_new_roles.php
+- test_schedule_flow.php
+- test_workflow.php
+- verify_sales_system.php
+
+=== UNUSED FOLDERS ===
+- lando/ (old sales system folder - not used anymore)
+
+=== HOW TO DELETE ===
+
+Option 1: Delete manually in File Explorer
+1. Open C:\xampp\htdocs\Pharmacy_Linda\
+2. Select all .md files and delete
+3. Select all test/debug files listed above and delete
+4. Delete the "lando" folder
+
+Option 2: Use this PowerShell command
+1. Open PowerShell as Administrator
+2. Navigate to: cd C:\xampp\htdocs\Pharmacy_Linda\
+3. Run: Remove-Item *.md
+4. Run: Remove-Item lando -Recurse -Force
+
+=== IMPORTANT - DO NOT DELETE ===
+Keep these essential files:
+- All .php files in root (except test/debug files listed above)
+- config.php
+- common.php
+- db.php
+- PayMongoClient.php
+- sales_helpers.php
+- process10_14_helpers.php
+- process7_9_helpers.php
+- All files in api/ folder
+- All files in assets/ folder
+- All files in database/ folder
+- All files in uploads/ folder
+- README.md (optional - keep for reference)
+
+===============================================
+After cleanup, your system will still work perfectly!
+All core functionality is preserved.
+===============================================

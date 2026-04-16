@@ -3,7 +3,7 @@ require_once __DIR__ . '/common.php';
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/process10_14_helpers.php';
 require_login();
-require_role(['Intern', 'Pharmacy Technician']);
+require_role(['Intern', 'Pharmacy Technician', 'Pharmacy Assistant', 'Pharmacist Assistant', 'Pharmacist']);
 $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 if ($conn->connect_error) {
     die('Database connection error: ' . htmlspecialchars($conn->connect_error));
