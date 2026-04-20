@@ -73,6 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['moa_file'])) {
             <div class="sidebar-brand">Pharmacy Internship</div>
             <nav>
                 <a href="dashboard_intern.php">Home</a>
+                <a href="requirements_upload.php">Upload Requirements</a>
+                <a href="checklist.php">Checklist</a>
+                <a href="policies.php">Policies</a>
                 <a href="intern_moa_management.php" class="active">MOA Management</a>
                 <a href="logout.php">Logout</a>
             </nav>

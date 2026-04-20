@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
     full_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     password_hash VARCHAR(255) DEFAULT NULL,
-    role ENUM('Intern','HR Personnel','Pharmacist') NULL,
+    role ENUM('Intern','HR Personnel','Pharmacist','Pharmacy Technician') NULL,
     google_id VARCHAR(255) DEFAULT NULL,
     created_at DATETIME NOT NULL,
     INDEX(role)
@@ -50,6 +50,8 @@ CREATE TABLE IF NOT EXISTS intern_submissions (
     UNIQUE KEY user_requirement_unique (user_id, requirement_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Note: If using complete_database.sql, skip this INSERT section
+-- This is only for individual file setup
 INSERT IGNORE INTO internship_requirements (title, description, created_at) VALUES
 ('Proof of Enrollment', 'Upload a valid school enrollment letter or student ID.', NOW()),
 ('Birth Certificate', 'Upload a copy of your birth certificate.', NOW()),

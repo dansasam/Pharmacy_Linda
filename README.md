@@ -1,100 +1,177 @@
-# Pharmacy Internship Management System
+# Pharmacy Linda - Internship Management System
 
-A full-stack prototype for Pharmacy Internship Management using HTML, CSS, JavaScript, PHP, and MySQL.
+A comprehensive pharmacy management system with integrated sales, prescription management, and inventory tracking.
 
-## Project Overview
+## 🚀 Features
 
-This system supports:
-- Email/password registration and login
-- Google OAuth 2.0 login flow
-- Session-based authentication with PHP
-- Role-based dashboards for Intern, HR Personnel, and Pharmacist
-- Requirement and policy management for HR
-- Intern document submission, review, and approval workflow
-- Completion tracking and reports for Pharmacists
-- Interview management and candidate assessments
-- Internship scheduling and staff scheduling
-- MOA verification and internship record management
+### Customer Features
+- Browse and purchase pharmacy products
+- Upload prescriptions for Rx medications
+- Multiple payment options (Cash, Card, GCash via PayMongo)
+- Order tracking and receipt generation
+- Shopping cart functionality
 
-## Features
+### Pharmacy Assistant Features
+- Review and verify customer prescriptions
+- Check product availability
+- Process orders based on prescriptions
+- Confirm payments (cash/card)
+- Dispense orders with automatic inventory deduction
+- View order history and receipts
 
-- Register as a new user (email/password)
-- After registration, select your role (Intern, HR Personnel, or Pharmacist)
-- Login with email/password or Google
-- Role-based redirection after login
-- Intern upload checklist with status tracking
-- HR management of required documents and pharmacy policies
-- HR approval/rejection workflow with remarks
-- Pharmacist intern monitoring and completion reports
-- JSON-based backend API endpoints
+### Pharmacist Features
+- All assistant features
+- Approve requisitions
+- Manage purchase orders
+- View stock reports
 
-## Installation
+### Intern Features
+- Create inventory reports
+- View stock status
+- Submit requirements
+- Track internship progress
 
-1. Install XAMPP or another PHP/MySQL server.
-2. Place the project folder in `htdocs` (for XAMPP):
-   - `C:\xampp\htdocs\Pharmacy intership system`
-3. Start Apache and MySQL from the XAMPP control panel.
-4. Create the database:
-   - Open `http://localhost/phpmyadmin`
-   - Run the SQL statements from `schema.sql`
-5. Update database credentials in `config.php` if needed.
+### HR Features
+- Manage applicants
+- Schedule interviews
+- Process MOA documents
+- Assign internship schedules
 
-## Google OAuth Setup
+## 📋 Requirements
 
-1. Create a Google Cloud project at https://console.cloud.google.com.
-2. Configure OAuth consent screen and add a Web application credential.
-3. Add `http://localhost/Pharmacy intership system/google_callback.php` as an authorized redirect URI.
-4. Copy the Client ID and Client Secret into `config.php`:
-   - `GOOGLE_CLIENT_ID`
-   - `GOOGLE_CLIENT_SECRET`
-5. Save the file and restart Apache if required.
+- PHP 7.4 or higher
+- MySQL 5.7 or higher
+- Apache Web Server
+- XAMPP (recommended)
 
-## Usage
+## 🔧 Installation
 
-### Intern
+### 1. Clone Repository
+```bash
+git clone https://github.com/YOUR_USERNAME/Pharmacy_Linda.git
+cd Pharmacy_Linda
+```
 
-- Register and choose "Intern" role
-- Login with email/password or Google
-- Upload required documents for each checklist item
-- Review status indicators for Uploaded, Pending, Approved, or Rejected
-- View pharmacy policies and guidelines
+### 2. Setup XAMPP
+1. Install XAMPP from https://www.apachefriends.org/
+2. Copy project folder to `C:\xampp\htdocs\`
+3. Start Apache and MySQL from XAMPP Control Panel
 
-### HR Personnel
+### 3. Create Database
+1. Open phpMyAdmin: `http://localhost/phpmyadmin`
+2. Create new database: `pharmacy_linda`
+3. Import database file: `database/COMPLETE_DATABASE_WITH_SALES.sql`
 
-- Register and choose "HR Personnel" role
-- Login with email/password or Google
-- Manage internship requirement templates
-- Create and edit pharmacy policies by category
-- Review intern submissions, approve or reject documents, and leave remarks
-- Monitor total interns, pending submissions, and completed interns
+### 4. Configure Database Connection
+Edit `config.php`:
+```php
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_NAME', 'pharmacy_linda');
+```
+
+### 5. Create Upload Folders
+```bash
+mkdir uploads/prescriptions
+mkdir uploads/moa
+mkdir uploads/requirements
+```
+
+### 6. Access System
+Open browser and go to: `http://localhost/Pharmacy_Linda/`
+
+## 👥 Test Accounts
+
+### Customer
+- Email: `customer@test.com`
+- Password: `password123`
+
+### Pharmacy Assistant
+- Email: `assistant@test.com`
+- Password: `password123`
 
 ### Pharmacist
+- Email: `pharmacist@test.com`
+- Password: `password123`
 
-- Register and choose "Pharmacist" role
-- Login with email/password or Google
-- View intern progress and completion status
-- See reports for interns with approved document counts and completion percentage
+### Intern
+- Email: `intern@test.com`
+- Password: `password123`
 
-## Notes
+## 💳 Payment Integration
 
-- This project is a functional prototype intended for demo or hackathon use.
-- File uploads are stored in `uploads/`.
-- Use modern browsers for best dashboard experience.
-- For quick testing, create accounts using the registration page and upload sample PDFs or images.
+The system integrates with PayMongo for online payments (GCash, Credit/Debit Cards).
 
-## File Structure
+To enable PayMongo:
+1. Sign up at https://paymongo.com
+2. Get your API keys
+3. Update `config.php` with your keys
 
-- `index.php` — Login page
-- `register.php` — Registration page
-- `choose_role.php` — Role selection for new users
-- `google_login.php`, `google_callback.php`, `google_role.php` — Google sign-in flow
-- `dashboard_intern.php` — Intern dashboard
-- `dashboard_hr.php` — HR dashboard
-- `dashboard_pharmacist.php` — Pharmacist dashboard
-- `interview_management.php` — HR interview and assessment management
-- `schedule_management.php` — HR schedule management
-- `moa_management.php` — HR MOA verification
-- `api/` — Backend REST-style endpoints
-- `assets/css/style.css` — UI styles
-- `assets/js/app.js` — Dashboard behavior
-- `schema.sql` — Database schema and seed data
+## 📁 Project Structure
+
+```
+Pharmacy_Linda/
+├── api/                    # API endpoints
+├── assets/                 # CSS, JS, images
+│   ├── css/
+│   └── js/
+├── database/              # Database files
+├── uploads/               # User uploads
+├── config.php             # Database configuration
+├── common.php             # Common functions
+├── sales_helpers.php      # Sales system helpers
+├── process10_14_helpers.php  # Navigation helpers
+└── [various PHP pages]
+```
+
+## 🔐 Security Notes
+
+- Change default passwords before deployment
+- Update database credentials in `config.php`
+- Ensure `uploads/` folder has proper permissions
+- Use HTTPS in production
+- Keep PayMongo API keys secure
+
+## 📝 Database Tables
+
+- `users` - User accounts
+- `sales` - Customer orders
+- `sale_items` - Order line items
+- `prescriptions` - Customer prescriptions
+- `product_inventory` - Product stock
+- `product_logs` - Inventory audit trail
+- `notifications` - User notifications
+- And more...
+
+## 🎯 Workflow
+
+1. Customer uploads prescription
+2. Assistant reviews and verifies prescription
+3. Assistant checks availability and processes order
+4. Customer receives notification and chooses payment method
+5. Customer pays (cash/card at counter or GCash online)
+6. Assistant confirms payment (for cash/card)
+7. Assistant dispenses order (inventory auto-deducts)
+8. Customer receives notification and picks up order
+
+## 🛠️ Technologies Used
+
+- PHP
+- MySQL
+- JavaScript
+- Bootstrap Icons
+- PayMongo API
+- XAMPP
+
+## 📄 License
+
+This project is for educational purposes.
+
+## 👨‍💻 Author
+
+Pharmacy Linda Development Team
+
+## 🤝 Contributing
+
+This is an academic project. For questions or issues, please contact the development team.

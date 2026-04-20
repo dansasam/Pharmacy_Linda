@@ -4,7 +4,11 @@ require_login();
 require_role('HR Personnel');
 $user = current_user();
 
-$stmtUsers = $pdo->query("SELECT id, full_name, role FROM users WHERE role IN ('Intern','HR Personnel','Pharmacist') ORDER BY role, full_name");
+// Check for URL parameters to pre-select intern
+$preselected_intern_id = isset($_GET['intern_id']) ? intval($_GET['intern_id']) : 0;
+$preselected_name = isset($_GET['name']) ? $_GET['name'] : '';
+
+$stmtUsers = $pdo->query("SELECT id, full_name, role FROM users WHERE role IN ('Intern','HR Personnel','Pharmacist','Pharmacy Technician','Pharmacist Assistant') ORDER BY role, full_name");
 $allUsers = $stmtUsers->fetchAll();
 ?>
 <!DOCTYPE html>
@@ -24,6 +28,7 @@ $allUsers = $stmtUsers->fetchAll();
                 <a href="dashboard_hr.php#requirements">Manage Requirements</a>
                 <a href="dashboard_hr.php#policies">Manage Policies</a>
                 <a href="dashboard_hr.php#reviews">Review Submissions</a>
+                <a href="dashboard_hr.php#approve">Approve Applicants</a>
                 <a href="interview_management.php">Interview Management</a>
                 <a href="schedule_management.php" class="active">Schedule Management</a>
                 <a href="moa_management.php">MOA Management</a>
@@ -328,6 +333,29 @@ $allUsers = $stmtUsers->fetchAll();
         }
 
         loadSchedules();
+
+        // Check for pre-selected intern from URL parameters
+        <?php if ($preselected_intern_id): ?>
+        // Auto-show form and pre-select intern when coming from interview management
+        setTimeout(() => {
+            const form = document.querySelector('#schedule-form');
+            const showButton = document.querySelector('#show-new-schedule-form');
+            
+            if (form && showButton) {
+                // Show the form
+                form.style.display = 'grid';
+                
+                // Pre-select the intern
+                form.intern_id.value = <?php echo $preselected_intern_id; ?>;
+                
+                // Switch to organize schedule tab
+                setActiveTab('organize-schedule-panel');
+                
+                // Show notification
+                alert('Setting schedule for: <?php echo addslashes($preselected_name); ?>');
+            }
+        }, 500);
+        <?php endif; ?>
     </script>
 </body>
 </html>

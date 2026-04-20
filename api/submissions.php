@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../common.php';
+require_once __DIR__ . '/../intern_access_control.php';
 $action = $_GET['action'] ?? '';
 
 switch ($action) {
@@ -31,6 +32,12 @@ switch ($action) {
             $insert = $pdo->prepare('INSERT INTO intern_submissions (user_id, requirement_id, filename, status, uploaded_at) VALUES (?, ?, ?, ?, NOW())');
             $insert->execute([$user['id'], $requirement_id, $name, 'Pending']);
         }
+        
+        // Update intern status after upload
+        if ($user['role'] === 'Intern') {
+            update_intern_status($user['id']);
+        }
+        
         send_json(['success' => true]);
         break;
 
@@ -82,12 +89,18 @@ switch ($action) {
         $stmt = $pdo->prepare('UPDATE intern_submissions SET status = ?, remarks = ?, reviewed_at = NOW() WHERE id = ?');
         $stmt->execute([$status, $remarks, $id]);
 
+        // Get user ID for status update
+        $userStmt = $pdo->prepare('SELECT user_id FROM intern_submissions WHERE id = ?');
+        $userStmt->execute([$id]);
+        $userId = $userStmt->fetchColumn();
+
+        // Update intern application status
+        if ($userId) {
+            update_intern_status($userId);
+        }
+
         // Check if all requirements are approved for this user
         if ($status === 'Approved') {
-            $userStmt = $pdo->prepare('SELECT user_id FROM intern_submissions WHERE id = ?');
-            $userStmt->execute([$id]);
-            $userId = $userStmt->fetchColumn();
-
             $totalReq = $pdo->query('SELECT COUNT(*) FROM internship_requirements')->fetchColumn();
             $approvedCount = $pdo->prepare('SELECT COUNT(*) FROM intern_submissions WHERE user_id = ? AND status = "Approved"');
             $approvedCount->execute([$userId]);

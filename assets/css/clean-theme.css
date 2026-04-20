@@ -1,0 +1,494 @@
+/* Clean Theme - Removes excessive colors, keeps validation colors only when needed */
+
+/* ========================================
+   BUTTONS - SIMPLIFIED AND CONSISTENT
+   ======================================== */
+
+/* Base button style */
+.ls-btn, button.ls-btn, a.ls-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    line-height: 1.5;
+}
+
+/* Small buttons */
+.ls-btn-sm {
+    padding: 6px 12px !important;
+    font-size: 0.8rem !important;
+}
+
+/* Primary button - Simple blue */
+.ls-btn-primary {
+    background: #3498db !important;
+    color: white !important;
+    border-color: #3498db !important;
+}
+
+.ls-btn-primary:hover {
+    background: #2980b9 !important;
+    border-color: #2980b9 !important;
+}
+
+/* Success button - Simple green */
+.ls-btn-success {
+    background: #2ecc71 !important;
+    color: white !important;
+    border-color: #2ecc71 !important;
+}
+
+.ls-btn-success:hover {
+    background: #27ae60 !important;
+    border-color: #27ae60 !important;
+}
+
+/* Danger button - Simple red */
+.ls-btn-danger {
+    background: #e74c3c !important;
+    color: white !important;
+    border-color: #e74c3c !important;
+}
+
+.ls-btn-danger:hover {
+    background: #c0392b !important;
+    border-color: #c0392b !important;
+}
+
+/* Warning button - Simple orange */
+.ls-btn-warning {
+    background: #f39c12 !important;
+    color: white !important;
+    border-color: #f39c12 !important;
+}
+
+.ls-btn-warning:hover {
+    background: #e67e22 !important;
+    border-color: #e67e22 !important;
+}
+
+/* Secondary button - Simple gray */
+.ls-btn-secondary {
+    background: #95a5a6 !important;
+    color: white !important;
+    border-color: #95a5a6 !important;
+}
+
+.ls-btn-secondary:hover {
+    background: #7f8c8d !important;
+    border-color: #7f8c8d !important;
+}
+
+/* Ghost button - Outline only */
+.ls-btn-ghost {
+    background: transparent !important;
+    color: #64748b !important;
+    border-color: #e2e8f0 !important;
+}
+
+.ls-btn-ghost:hover {
+    background: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+}
+
+/* Remove all gradients and shadows from buttons */
+.ls-btn, button, a.ls-btn {
+    background-image: none !important;
+    box-shadow: none !important;
+}
+
+/* ========================================
+   INPUTS - CLEAN AND SIMPLE
+   ======================================== */
+
+/* Remove default input colors - only show validation colors */
+input, select, textarea {
+    border: 1px solid #e2e8f0 !important;
+    background: #ffffff !important;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+input:focus, select:focus, textarea:focus {
+    border-color: #3498db !important;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1) !important;
+    outline: none;
+}
+
+/* Validation colors - only apply when has class */
+input.is-valid, select.is-valid, textarea.is-valid {
+    border-color: #2ecc71 !important;
+}
+
+input.is-invalid, select.is-invalid, textarea.is-invalid {
+    border-color: #e74c3c !important;
+}
+
+/* ========================================
+   CARDS - CLEAN AND SIMPLE
+   ======================================== */
+
+/* Remove excessive background colors from cards */
+.ls-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.ls-card-header {
+    background: #f8fafc !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.ls-card-body {
+    padding: 16px;
+}
+
+.ls-card-body-flush {
+    padding: 0;
+}
+
+/* ========================================
+   BADGES - SIMPLIFIED
+   ======================================== */
+
+/* Simplify badges - keep only status colors */
+.ls-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ls-badge-success {
+    background: rgba(46, 204, 113, 0.15) !important;
+    color: #27ae60 !important;
+}
+
+.ls-badge-danger {
+    background: rgba(231, 76, 60, 0.15) !important;
+    color: #c0392b !important;
+}
+
+.ls-badge-warning {
+    background: rgba(243, 156, 18, 0.15) !important;
+    color: #e67e22 !important;
+}
+
+.ls-badge-info {
+    background: rgba(52, 152, 219, 0.15) !important;
+    color: #2980b9 !important;
+}
+
+.ls-badge-secondary {
+    background: rgba(149, 165, 166, 0.15) !important;
+    color: #7f8c8d !important;
+}
+
+/* ========================================
+   ALERTS - SIMPLIFIED
+   ======================================== */
+
+/* Remove colored backgrounds from alerts - keep only borders */
+.ls-alert {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.875rem;
+}
+
+.ls-alert-success {
+    background: #ffffff !important;
+    border-left: 4px solid #2ecc71 !important;
+    border-top: 1px solid #e2e8f0 !important;
+    border-right: 1px solid #e2e8f0 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    color: #1e293b !important;
+}
+
+.ls-alert-danger {
+    background: #ffffff !important;
+    border-left: 4px solid #e74c3c !important;
+    border-top: 1px solid #e2e8f0 !important;
+    border-right: 1px solid #e2e8f0 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    color: #1e293b !important;
+}
+
+.ls-alert-warning {
+    background: #ffffff !important;
+    border-left: 4px solid #f39c12 !important;
+    border-top: 1px solid #e2e8f0 !important;
+    border-right: 1px solid #e2e8f0 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    color: #1e293b !important;
+}
+
+.ls-alert-info {
+    background: #ffffff !important;
+    border-left: 4px solid #3498db !important;
+    border-top: 1px solid #e2e8f0 !important;
+    border-right: 1px solid #e2e8f0 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    color: #1e293b !important;
+}
+
+/* ========================================
+   TABLES - CLEAN
+   ======================================== */
+
+/* Remove row background colors */
+.row-warn td {
+    background: #ffffff !important;
+}
+
+.row-danger td {
+    background: #ffffff !important;
+}
+
+/* Simplify table headers */
+th {
+    background: #f8fafc !important;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #64748b;
+}
+
+td {
+    background: #ffffff !important;
+    font-size: 0.875rem;
+}
+
+/* ========================================
+   PAGE HEADER - SIMPLIFIED
+   ======================================== */
+
+.ls-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.ls-page-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ========================================
+   LABELS - SIMPLIFIED
+   ======================================== */
+
+.ls-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #475569;
+}
+
+/* ========================================
+   MODALS - SIMPLIFIED
+   ======================================== */
+
+.ls-modal-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+
+.ls-modal-backdrop.show {
+    display: flex;
+}
+
+.ls-modal {
+    background: white;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.ls-modal-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ls-modal-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.ls-modal-body {
+    padding: 20px;
+}
+
+.ls-modal-footer {
+    padding: 16px 20px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* ========================================
+   REMOVE EXCESSIVE STYLING
+   ======================================== */
+
+/* Remove colored backgrounds from stat cards */
+.stat-card, .ls-stat {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+/* Simplify sidebar */
+.sidebar {
+    background: #ffffff !important;
+    border-right: 1px solid #e2e8f0 !important;
+}
+
+.sidebar nav a {
+    background: #ffffff !important;
+    color: #1e293b !important;
+    padding: 10px 16px;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    font-size: 0.875rem;
+}
+
+.sidebar nav a:hover {
+    background: #f8fafc !important;
+}
+
+.sidebar nav a.active {
+    background: #3498db !important;
+    color: white !important;
+}
+
+/* Simplify topbar */
+.topbar {
+    background: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+}
+
+/* Remove colored backgrounds from action cards */
+.action-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.action-card:hover {
+    border-color: #3498db !important;
+}
+
+/* Simplify empty states */
+.empty-state, .ls-empty {
+    background: #ffffff !important;
+    border: 1px dashed #e2e8f0 !important;
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    color: #94a3b8;
+}
+
+/* ========================================
+   PURCHASE ORDER TOOLBAR BUTTONS
+   ======================================== */
+
+.tb-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    background-image: none !important;
+    box-shadow: none !important;
+}
+
+.tb-btn-print {
+    background: #2ecc71 !important;
+    color: white !important;
+}
+
+.tb-btn-print:hover {
+    background: #27ae60 !important;
+}
+
+.tb-btn-back {
+    background: #95a5a6 !important;
+    color: white !important;
+}
+
+.tb-btn-back:hover {
+    background: #7f8c8d !important;
+}
+
+/* ========================================
+   GENERAL CLEANUP
+   ======================================== */
+
+/* Remove all box shadows */
+* {
+    box-shadow: none !important;
+}
+
+/* Remove all gradients */
+* {
+    background-image: none !important;
+}
+
+/* Simplify focus states */
+*:focus {
+    outline: none;
+}
+
+input:focus, select:focus, textarea:focus, button:focus {
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1) !important;
+}

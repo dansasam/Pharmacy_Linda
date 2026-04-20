@@ -64,6 +64,21 @@ switch ($action) {
         send_json(['success' => true, 'message' => $message]);
         break;
 
+    case 'get_schedule':
+        require_login();
+        require_role('HR Personnel');
+        $intern_id = intval($_GET['intern_id'] ?? 0);
+        if (!$intern_id) {
+            send_json(['success' => false, 'message' => 'Invalid intern ID.'], 400);
+        }
+        
+        $stmt = $pdo->prepare('SELECT * FROM pending_applicants WHERE intern_id = ? LIMIT 1');
+        $stmt->execute([$intern_id]);
+        $schedule = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        send_json(['success' => true, 'schedule' => $schedule]);
+        break;
+
     case 'schedule':
         require_login();
         require_role('HR Personnel');

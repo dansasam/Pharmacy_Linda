@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Start Here - Troubleshooting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 50px;
+        }
+        h1 {
+            color: #667eea;
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+        }
+        .step {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .step:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+        .step-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-right: 15px;
+        }
+        .step-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .step-desc {
+            color: #666;
+            line-height: 1.6;
+            margin-left: 55px;
+        }
+        .big-button {
+            display: block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 25px;
+            border-radius: 15px;
+            text-decoration: none;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 30px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        .big-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+        .issue-box {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .issue-title {
+            color: #856404;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        .issue-list {
+            color: #856404;
+            margin-left: 20px;
+        }
+        .success-box {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .success-title {
+            color: #155724;
+            font-weight: bold;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+        code {
+            background: #e9ecef;
+            padding: 3px 8px;
+            border-radius: 5px;
+            color: #667eea;
+            font-family: 'Courier New', monospace;
+        }
+        .emoji {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Start Here</h1>
+        <p class="subtitle">Fix your Pharmacy Inventory System issues</p>
+
+        <div class="issue-box">
+            <div class="issue-title">🚨 Your Current Issues:</div>
+            <ul class="issue-list">
+                <li>Sample products not showing in Create Inventory Report</li>
+                <li>Deleted reports still appearing on view page</li>
+            </ul>
+        </div>
+
+        <a href="diagnostic_index.php" class="big-button">
+            🚀 Open Diagnostic Dashboard
+        </a>
+
+        <div class="step">
+            <span class="step-number">1</span>
+            <div style="display: inline-block; vertical-align: top; width: calc(100% - 60px);">
+                <div class="step-title">Run Quick Check</div>
+                <div class="step-desc">
+                    Click the button above to open the diagnostic dashboard, then click "Quick Check". 
+                    This will tell you exactly what's wrong in 30 seconds.
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">2</span>
+            <div style="display: inline-block; vertical-align: top; width: calc(100% - 60px);">
+                <div class="step-title">Follow the Recommendations</div>
+                <div class="step-desc">
+                    The diagnostic tool will show you specific actions to take:
+                    <ul style="margin-top: 10px; margin-left: 20px;">
+                        <li>If columns are missing → Run <code>add_tracking_columns.sql</code></li>
+                        <li>If no products found → Run <code>add_sample_products.sql</code></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">3</span>
+            <div style="display: inline-block; vertical-align: top; width: calc(100% - 60px);">
+                <div class="step-title">Clear Browser Cache</div>
+                <div class="step-desc">
+                    Press <code>Ctrl + Shift + Delete</code> and clear "Cached images and files".
+                    Or just press <code>Ctrl + F5</code> to hard refresh.
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">4</span>
+            <div style="display: inline-block; vertical-align: top; width: calc(100% - 60px);">
+                <div class="step-title">Test Your Pages</div>
+                <div class="step-desc">
+                    Go to Create Inventory Report and verify products appear.
+                    Go to View Reports and verify deleted reports are gone.
+                </div>
+            </div>
+        </div>
+
+        <div class="success-box">
+            <div class="success-title">✅ That's it!</div>
+            <p style="color: #155724;">
+                The diagnostic tools will guide you through everything step by step.
+            </p>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding-top: 30px; border-top: 2px solid #e9ecef;">
+            <p style="color: #666; margin-bottom: 15px;">Quick Links:</p>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <a href="quick_check.php" style="padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">⚡ Quick Check</a>
+                <a href="diagnostic_full.php" style="padding: 10px 20px; background: #28a745; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">🔍 Full Diagnostic</a>
+                <a href="check_products.php" style="padding: 10px 20px; background: #17a2b8; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">📦 Products</a>
+                <a href="check_reports.php" style="padding: 10px 20px; background: #ffc107; color: #333; text-decoration: none; border-radius: 8px; font-weight: bold;">📋 Reports</a>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px; color: #999; font-size: 0.9em;">
+            <p>Need more help? Check <code>TROUBLESHOOTING_GUIDE.md</code> for detailed instructions.</p>
+        </div>
+    </div>
+</body>
+</html>

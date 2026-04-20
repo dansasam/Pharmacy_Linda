@@ -1,0 +1,42 @@
+# Uploads folder (contains user-uploaded files)
+uploads/*
+!uploads/.gitkeep
+
+# Config file (contains sensitive database credentials)
+# Comment this out if you want to include config.php
+# config.php
+
+# Test and debug files
+check_*.php
+test_*.php
+debug_*.php
+fix_*.php
+diagnostic_*.php
+quick_check.php
+quick_column_fix.php
+verify_sales_system.php
+approve_reports_now.php
+complete_assessment_fix.php
+force_*.php
+
+# Documentation files (optional - uncomment to exclude)
+# *.md
+# *.txt
+
+# IDE and system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Logs
+*.log
+
+# Old/unused folders
+lando/

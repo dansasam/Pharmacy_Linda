@@ -7,7 +7,7 @@ if (!$user || $user['role'] !== null) {
 $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $role = $_POST['role'] ?? '';
-    if (!in_array($role, ['Intern', 'HR Personnel', 'Pharmacist'])) {
+    if (!in_array($role, ['Intern', 'HR Personnel', 'Pharmacist', 'Pharmacy Technician', 'Customer', 'Pharmacist Assistant'])) {
         $message = 'Invalid role selected.';
     } else {
         $stmt = $pdo->prepare('UPDATE users SET role = ? WHERE id = ?');
@@ -32,9 +32,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form method="post" class="auth-form">
                 <label>Select Role</label>
                 <select name="role" required>
+                    <option value="">-- Choose your role --</option>
                     <option value="Intern">Intern</option>
                     <option value="HR Personnel">HR Personnel</option>
                     <option value="Pharmacist">Pharmacist</option>
+                    <option value="Pharmacy Technician">Pharmacy Technician</option>
+                    <option value="Pharmacist Assistant">Pharmacist Assistant</option>
+                    <option value="Customer">Customer</option>
                 </select>
                 <button type="submit" class="btn btn-primary">Continue</button>
             </form>

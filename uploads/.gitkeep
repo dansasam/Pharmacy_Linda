@@ -1,0 +1,2 @@
+# This file ensures the uploads folder is tracked by git
+# The folder itself is needed but the uploaded files should not be committed

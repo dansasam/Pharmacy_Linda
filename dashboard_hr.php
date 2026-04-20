@@ -25,6 +25,7 @@ $user = current_user();
                 <a href="interview_management.php">Interview Management</a>
                 <a href="schedule_management.php">Schedule Management</a>
                 <a href="moa_management.php">MOA Management</a>
+                <a href="process7_9_tasks.php">Task Management</a>
                 <a href="logout.php">Logout</a>
             </nav>
         </aside>

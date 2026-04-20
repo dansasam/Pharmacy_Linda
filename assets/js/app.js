@@ -25,6 +25,7 @@ if (loginForm) {
             if (role === 'Intern') window.location.href = 'dashboard_intern.php';
             if (role === 'HR Personnel') window.location.href = 'dashboard_hr.php';
             if (role === 'Pharmacist') window.location.href = 'dashboard_pharmacist.php';
+            if (role === 'Pharmacy Technician') window.location.href = 'dashboard_technician.php';
         } catch (error) {
             showMessage('#login-message', error.message, true);
         }
@@ -64,18 +65,11 @@ const statusBadge = (status) => {
     return `<span class="${cls}">${status}</span>`;
 };
 
-const loadInternDashboard = async () => {
+const loadRequirementsPage = async () => {
     const response = await fetchJson('api/submissions.php?action=list_user');
     const items = response.items;
-    const total = items.length;
-    let uploaded = 0;
-    let approved = 0;
-    let missing = 0;
     const rows = items.map(item => {
         const status = item.status || 'Missing';
-        if (item.filename) uploaded++;
-        if (status === 'Approved') approved++;
-        if (status === 'Missing') missing++;
         return `<tr>
             <td>${item.title}</td>
             <td>${item.description}</td>
@@ -87,16 +81,8 @@ const loadInternDashboard = async () => {
         </tr>`;
     }).join('');
 
-    document.querySelector('#stat-total').textContent = total;
-    document.querySelector('#stat-uploaded').textContent = uploaded;
-    document.querySelector('#stat-approved').textContent = approved;
-    document.querySelector('#stat-missing').textContent = missing;
-    const completePercent = total ? Math.round((approved / total) * 100) : 0;
-    document.querySelector('#progress-bar').style.width = `${completePercent}%`;
-    document.querySelector('#progress-text').textContent = `${completePercent}% complete`;
     document.querySelector('#requirements-list').innerHTML = `
         <table><thead><tr><th>Requirement</th><th>Description</th><th>File</th><th>Status</th><th>Remark</th><th>Uploaded</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>`;
-    document.querySelector('#checklist-table').innerHTML = document.querySelector('#requirements-list').innerHTML;
     document.querySelectorAll('.upload-form').forEach(form => {
         form.addEventListener('submit', async (event) => {
             event.preventDefault();
@@ -108,23 +94,34 @@ const loadInternDashboard = async () => {
             payload.append('document', file);
             try {
                 await fetchJson('api/submissions.php?action=upload', { method: 'POST', body: payload });
-                await loadInternDashboard();
+                await loadRequirementsPage();
             } catch (err) {
                 alert(err.message);
             }
         });
     });
-    const scheduleResponse = await fetchJson('api/interviews.php?action=intern_schedule');
-    const schedule = scheduleResponse.schedule;
-    document.querySelector('#interview-schedule').innerHTML = schedule ? `
-        <div class="notification-card">
-            <p><strong>Interview Date:</strong> ${new Date(schedule.interview_date).toLocaleString()}</p>
-            <p><strong>Mode:</strong> ${schedule.interview_mode}</p>
-            <p><strong>${schedule.interview_mode === 'Online' ? 'Meeting Link' : 'Location'}:</strong> ${schedule.interview_mode === 'Online' ? (schedule.interview_link ? `<a href="${schedule.interview_link}" target="_blank">${schedule.interview_link}</a>` : 'Not provided') : (schedule.interview_location || 'Not provided')}</p>
-            <p><strong>Status:</strong> ${schedule.status}</p>
-            <p><strong>Message:</strong> ${schedule.notification_message || 'No additional message.'}</p>
-        </div>
-    ` : '<div class="notification-card"><p>No interview schedule has been assigned yet. Please wait for HR to schedule your interview.</p></div>';
+};
+
+const loadChecklistPage = async () => {
+    const response = await fetchJson('api/submissions.php?action=list_user');
+    const items = response.items;
+    const rows = items.map(item => {
+        const status = item.status || 'Missing';
+        return `<tr>
+            <td>${item.title}</td>
+            <td>${item.description}</td>
+            <td>${item.filename ? `<a href="uploads/${item.filename}" target="_blank">View</a>` : 'No file'}</td>
+            <td>${statusBadge(status)}</td>
+            <td>${item.remarks || '—'}</td>
+            <td>${item.uploaded_at ? new Date(item.uploaded_at).toLocaleDateString() : '—'}</td>
+        </tr>`;
+    }).join('');
+
+    document.querySelector('#checklist-table').innerHTML = `
+        <table><thead><tr><th>Requirement</th><th>Description</th><th>File</th><th>Status</th><th>Remark</th><th>Uploaded</th></tr></thead><tbody>${rows}</tbody></table>`;
+};
+
+const loadPoliciesPage = async () => {
     const policyResponse = await fetchJson('api/policies.php?action=list');
     document.querySelector('#policies-list').innerHTML = policyResponse.policies.map((policy, index) => `
         <div class="policy-title-box">
@@ -141,29 +138,6 @@ const loadInternDashboard = async () => {
             content.style.display = content.style.display === 'none' ? 'block' : 'none';
         });
     });
-    try {
-        const myScheduleResponse = await fetchJson('api/schedules.php?action=get&intern_id=' + window.pageData.userId);
-        const mySchedule = myScheduleResponse.schedule;
-        document.querySelector('#my-schedule').innerHTML = mySchedule ? `
-            <table class="schedule-table">
-                <thead><tr><th>Day</th><th>Hours</th></tr></thead>
-                <tbody>
-                    <tr><td>Monday</td><td>${mySchedule.monday}</td></tr>
-                    <tr><td>Tuesday</td><td>${mySchedule.tuesday}</td></tr>
-                    <tr><td>Wednesday</td><td>${mySchedule.wednesday}</td></tr>
-                    <tr><td>Thursday</td><td>${mySchedule.thursday}</td></tr>
-                    <tr><td>Friday</td><td>${mySchedule.friday}</td></tr>
-                    <tr><td>Saturday</td><td>${mySchedule.saturday}</td></tr>
-                    <tr><td>Sunday</td><td>${mySchedule.sunday}</td></tr>
-                </tbody>
-            </table>
-            <p><strong>Total Hours:</strong> ${mySchedule.total_hours}</p>
-            <p><strong>Notes:</strong> ${mySchedule.notes || 'None'}</p>
-        ` : '<p>No schedule assigned yet.</p>';
-    } catch (err) {
-        console.error('Error loading schedule:', err);
-        document.querySelector('#my-schedule').innerHTML = '<p>Unable to load schedule. Please try refreshing the page.</p>';
-    }
 };
 
 const loadHRDashboard = async () => {
@@ -284,8 +258,104 @@ const loadPharmacistDashboard = async () => {
             </tr>`).join('')}</tbody></table>`;
 };
 
+const loadInternDashboard = async () => {
+    const userId = window.pageData?.userId;
+    if (!userId) return;
+
+    // Load intern's schedule
+    try {
+        const scheduleResponse = await fetchJson('api/schedules.php?action=get');
+        if (scheduleResponse.success && scheduleResponse.schedule) {
+            const schedule = scheduleResponse.schedule;
+            const scheduleHtml = `
+                <table class="schedule-table">
+                    <thead>
+                        <tr>
+                            <th>Day</th>
+                            <th>Schedule</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Monday</td><td>${schedule.monday || 'Off'}</td></tr>
+                        <tr><td>Tuesday</td><td>${schedule.tuesday || 'Off'}</td></tr>
+                        <tr><td>Wednesday</td><td>${schedule.wednesday || 'Off'}</td></tr>
+                        <tr><td>Thursday</td><td>${schedule.thursday || 'Off'}</td></tr>
+                        <tr><td>Friday</td><td>${schedule.friday || 'Off'}</td></tr>
+                        <tr><td>Saturday</td><td>${schedule.saturday || 'Off'}</td></tr>
+                        <tr><td>Sunday</td><td>${schedule.sunday || 'Off'}</td></tr>
+                    </tbody>
+                </table>
+                ${schedule.total_hours ? `<p><strong>Total Hours:</strong> ${schedule.total_hours}</p>` : ''}
+                ${schedule.notes ? `<p><strong>Notes:</strong> ${schedule.notes}</p>` : ''}
+            `;
+            document.querySelector('#my-schedule').innerHTML = scheduleHtml;
+        } else {
+            document.querySelector('#my-schedule').innerHTML = '<p class="empty-state">No schedule has been assigned yet. Please contact HR for your work schedule.</p>';
+        }
+    } catch (error) {
+        document.querySelector('#my-schedule').innerHTML = '<p class="empty-state">Unable to load schedule. Please try again later.</p>';
+        console.error('Error loading schedule:', error);
+    }
+
+    // Load interview schedule
+    try {
+        const interviewResponse = await fetchJson('api/interviews.php?action=intern_schedule');
+        if (interviewResponse.success && interviewResponse.schedule) {
+            const interview = interviewResponse.schedule;
+            const interviewHtml = `
+                <div class="interview-card">
+                    <h4>${interview.interview_mode || 'Online'} Interview</h4>
+                    <p><strong>Date:</strong> ${interview.interview_date ? new Date(interview.interview_date).toLocaleDateString() : 'TBD'}</p>
+                    ${interview.interview_location ? `<p><strong>Location:</strong> ${interview.interview_location}</p>` : ''}
+                    ${interview.interview_link ? `<p><strong>Link:</strong> <a href="${interview.interview_link}" target="_blank">${interview.interview_link}</a></p>` : ''}
+                    ${interview.notification_message ? `<p><strong>Message:</strong> ${interview.notification_message}</p>` : ''}
+                </div>
+            `;
+            document.querySelector('#interview-schedule').innerHTML = interviewHtml;
+        } else {
+            document.querySelector('#interview-schedule').innerHTML = '<p class="empty-state">No upcoming interviews scheduled.</p>';
+        }
+    } catch (error) {
+        document.querySelector('#interview-schedule').innerHTML = '<p class="empty-state">Unable to load interview schedule.</p>';
+        console.error('Error loading interview:', error);
+    }
+
+    // Load requirements stats
+    try {
+        const statsResponse = await fetchJson('api/submissions.php?action=list_user');
+        if (statsResponse.success && statsResponse.items) {
+            const items = statsResponse.items;
+            const total = items.length;
+            const uploaded = items.filter(item => item.filename).length;
+            const approved = items.filter(item => item.status === 'Approved').length;
+            const missing = total - uploaded;
+
+            document.querySelector('#stat-total').textContent = total;
+            document.querySelector('#stat-uploaded').textContent = uploaded;
+            document.querySelector('#stat-approved').textContent = approved;
+            document.querySelector('#stat-missing').textContent = missing;
+
+            const percentage = total > 0 ? Math.round((approved / total) * 100) : 0;
+            document.querySelector('#progress-bar').style.width = `${percentage}%`;
+            document.querySelector('#progress-text').textContent = `${percentage}% complete`;
+        }
+    } catch (error) {
+        console.error('Error loading stats:', error);
+    }
+};
+
 if (pageRole === 'Intern') {
-    loadInternDashboard().catch(console.error);
+    // Check which page we're on and load appropriate data
+    if (document.querySelector('#requirements-list')) {
+        loadRequirementsPage().catch(console.error);
+    } else if (document.querySelector('#checklist-table')) {
+        loadChecklistPage().catch(console.error);
+    } else if (document.querySelector('#policies-list')) {
+        loadPoliciesPage().catch(console.error);
+    } else {
+        // Main dashboard
+        loadInternDashboard().catch(console.error);
+    }
 }
 if (pageRole === 'HR Personnel') {
     loadHRDashboard().catch(console.error);

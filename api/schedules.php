@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../common.php';
+require_once __DIR__ . '/../intern_access_control.php';
 $action = $_GET['action'] ?? '';
 
 switch ($action) {
@@ -58,6 +59,9 @@ switch ($action) {
             $stmt = $pdo->prepare('INSERT INTO internship_schedules (intern_id, monday, tuesday, wednesday, thursday, friday, saturday, sunday, total_hours, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
             $stmt->execute([$intern_id, $monday, $tuesday, $wednesday, $thursday, $friday, $saturday, $sunday, $total_hours, $notes]);
         }
+
+        // Update intern status after schedule assignment
+        update_intern_status($intern_id);
 
         send_json(['success' => true, 'message' => 'Schedule saved successfully.']);
         break;

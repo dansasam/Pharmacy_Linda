@@ -73,7 +73,7 @@ switch ($action) {
             send_json(['success' => false, 'message' => 'Google registration session expired.'], 400);
         }
         $data = parse_body();
-        $role = in_array($data['role'] ?? '', ['Intern', 'HR Personnel', 'Pharmacist']) ? $data['role'] : 'Intern';
+        $role = in_array($data['role'] ?? '', ['Intern', 'HR Personnel', 'Pharmacist', 'Pharmacy Technician']) ? $data['role'] : 'Intern';
         $pending = $_SESSION['google_pending'];
         $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ?');
         $stmt->execute([$pending['email']]);

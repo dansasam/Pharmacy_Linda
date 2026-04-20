@@ -34,12 +34,17 @@ function require_login() {
 
 function require_role($role) {
     $user = current_user();
-    if (!$user || ($user['role'] !== $role && $user['role'] !== null)) {
+    if (!$user) {
         header('Location: index.php');
         exit;
     }
     if ($user['role'] === null) {
         header('Location: choose_role.php');
+        exit;
+    }
+    $allowed = is_array($role) ? $role : [$role];
+    if (!in_array($user['role'], $allowed, true)) {
+        header('Location: index.php');
         exit;
     }
 }
@@ -63,6 +68,15 @@ function redirect_role_dashboard() {
             break;
         case 'Pharmacist':
             header('Location: dashboard_pharmacist.php');
+            break;
+        case 'Pharmacy Technician':
+            header('Location: dashboard_technician.php');
+            break;
+        case 'Pharmacist Assistant':
+            header('Location: dashboard_assistant.php');
+            break;
+        case 'Customer':
+            header('Location: dashboard_customer.php');
             break;
         default:
             header('Location: index.php');
